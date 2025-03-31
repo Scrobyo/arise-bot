@@ -52,21 +52,12 @@ module.exports = function messagesHandler(bot) {
       // 5. Botões de assinatura (com delay para melhor UX)
       await new Promise(resolve => setTimeout(resolve, 300));
       await ctx.reply(
-        'Planos disponíveis:',
+        'Planos disponíveis para compra:',
         messages.welcome5
       );
 
     } catch (error) {
       console.error('Erro no fluxo de boas-vindas:', error);
-
-      // Fallback simplificado
-      await ctx.replyWithHTML(messages.welcome1(firstName));
-      await ctx.replyWithHTML(messages.welcome3);
-      await ctx.replyWithHTML(messages.welcome4);
-      await ctx.reply(
-        'Escolha seu plano abaixo:',
-        messages.welcome5
-      );
     }
   });
 

@@ -4,6 +4,7 @@ require('dotenv').config();
 const { Telegraf } = require('telegraf');
 const setupHandlers = require('@handlers/indexHandler');
 const { botMiddleware } = require('@middlewares/bot');
+const { scheduleFollowUp } = require('@handlers/followupHandler');
 
 // Configuração inicial
 console.log('=== INICIALIZAÇÃO DO BOT ===');
