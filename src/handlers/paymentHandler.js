@@ -111,6 +111,42 @@ async function handlePayment(ctx, planType) {
   }
 }
 
+// Adicione este handler para o botão de cartão (por enquanto só informa)
+async function handleCardPayment(ctx, planType) {
+  try {
+    await ctx.answerCbQuery();
+    await ctx.replyWithHTML(
+      "🚧 <b>Pagamento com cartão em desenvolvimento</b>\n\n" +
+        "No momento, só aceitamos pagamentos via PIX.\n\n" +
+        "Por favor, selecione a opção PIX ou volte mais tarde."
+    );
+
+    // Mostra as opções de pagamento novamente
+    await showPaymentOptions(ctx, planType);
+  } catch (error) {
+    console.error("Erro no pagamento com cartão:", error);
+  }
+}
+
+// Adicione esta função auxiliar para mostrar as opções de pagamento
+async function showPaymentOptions(ctx, planType) {
+  try {
+    await ctx.answerCbQuery();
+    await ctx.replyWithHTML(
+      `💳 <b>Selecione a forma de pagamento para ${
+        getPlanDetails(planType).name
+      }:</b>`,
+      Markup.inlineKeyboard([
+        [Markup.button.callback("💰 Pagar com PIX", `vip_${planType}`)],
+        [Markup.button.callback("💳 Pagar com Cartão", `card_${planType}`)],
+        [Markup.button.callback("↩️ Voltar aos planos", "show_plans")],
+      ])
+    );
+  } catch (error) {
+    console.error("Erro ao mostrar opções de pagamento:", error);
+  }
+}
+
 // Handler de verificação de pagamento
 async function handlePaymentVerification(ctx, paymentId) {
   try {
@@ -180,26 +216,37 @@ function getExpirationDateText(planType) {
 
 // Exporta como função de handler
 module.exports = function paymentHandler(bot) {
-  // Handler para seleção de planos
-  bot.action(/vip_(1|3|6|life)/, async (ctx) => {
-    await handlePayment(ctx, ctx.match[0]);
+  // Handler para seleção de planos (agora mostra opções de pagamento)
+  bot.action(/select_plan_(1|3|6|life)/, async (ctx) => {
+    const planType = ctx.match[1]; // Pega o número ou 'life'
+    await showPaymentOptions(ctx, planType);
   });
 
-  // Handler para verificação de pagamento
+  // Handler para pagamento com PIX (mantém a mesma lógica)
+  bot.action(/vip_(1|3|6|life)/, async (ctx) => {
+    await handlePayment(ctx, ctx.match[0]); // 'vip_1', 'vip_3', etc.
+  });
+
+  // Handler para pagamento com cartão (por enquanto só informa)
+  bot.action(/card_(1|3|6|life)/, async (ctx) => {
+    const planType = ctx.match[1]; // Pega o número ou 'life'
+    await handleCardPayment(ctx, `vip_${planType}`);
+  });
+
+  // Restante dos handlers permanece igual...
   bot.action(/check_payment_(.*)/, async (ctx) => {
     await handlePaymentVerification(ctx, ctx.match[1]);
   });
 
-  // Handler para mostrar planos novamente
   bot.action("show_plans", async (ctx) => {
     await ctx.deleteMessage();
     await ctx.replyWithHTML(
       "💎 <b>Selecione seu plano VIP:</b>",
       Markup.inlineKeyboard([
-        [Markup.button.callback("1 MÊS - R$ 19,90", "vip_1")],
-        [Markup.button.callback("3 MESES - R$ 29,90", "vip_3")],
-        [Markup.button.callback("6 MESES - R$ 39,90", "vip_6")],
-        [Markup.button.callback("VITALÍCIO - R$ 49,90", "vip_life")],
+        [Markup.button.callback("1 MÊS - R$ 19,90", "select_plan_1")],
+        [Markup.button.callback("3 MESES - R$ 29,90", "select_plan_3")],
+        [Markup.button.callback("6 MESES - R$ 39,90", "select_plan_6")],
+        [Markup.button.callback("VITALÍCIO - R$ 49,90", "select_plan_life")],
       ])
     );
   });

@@ -17,10 +17,10 @@ const messages = {
   `),
   welcome4: cleanMessage(`💎 <b>Selecione seu plano VIP abaixo 👇🏻</b>`),
   welcome5: Markup.inlineKeyboard([
-    [Markup.button.callback("1 MÊS - R$ 19,90", "vip_1")],
-    [Markup.button.callback("3 MESES - R$ 29,90", "vip_3")],
-    [Markup.button.callback("6 MESES - R$ 39,90", "vip_6")],
-    [Markup.button.callback("VITALÍCIO - R$ 49,90", "vip_life")],
+    [Markup.button.callback("1 MÊS - R$ 19,90", "select_plan_1")],
+    [Markup.button.callback("3 MESES - R$ 29,90", "select_plan_3")],
+    [Markup.button.callback("6 MESES - R$ 39,90", "select_plan_6")],
+    [Markup.button.callback("VITALÍCIO - R$ 49,90", "select_plan_life")],
   ]),
   followUp: (firstName) =>
     cleanMessage(`
