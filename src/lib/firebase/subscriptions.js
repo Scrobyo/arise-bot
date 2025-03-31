@@ -146,5 +146,39 @@ async function cleanupExpiredSubscriptions() {
   await batch.commit();
 }
 
+// Adicione esta função ao seu subscriptions.js
+async function checkGroupMembers(bot, groupId) {
+  try {
+    const members = await bot.telegram.getChatAdministrators(groupId);
+    const memberIds = members.map((m) => m.user.id);
+
+    const nonSubscribers = [];
+
+    for (const userId of memberIds) {
+      const user = await bot.telegram.getChatMember(groupId, userId);
+
+      if (
+        user.user.is_bot ||
+        ["creator", "administrator"].includes(user.status)
+      ) {
+        continue;
+      }
+
+      const isSubscribed = await this.hasActiveSubscription(userId);
+      if (!isSubscribed) {
+        nonSubscribers.push(userId);
+      }
+    }
+
+    return nonSubscribers;
+  } catch (error) {
+    console.error("Erro ao verificar membros do grupo:", error);
+    return [];
+  }
+}
+
+// Adicione ao module.exports:
+module.exports.checkGroupMembers = checkGroupMembers;
+
 // Executa a cada 24h
 setInterval(cleanupExpiredSubscriptions, 24 * 60 * 60 * 1000);
