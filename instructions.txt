@@ -1,0 +1,3 @@
+pm2 start src/index.js --name arise-bot
+
+pm2 stop arise-bot && pm2 delete arise-bot

@@ -1,0 +1,14 @@
+# Ignorar a pasta node_modules, que contém as dependências do projeto
+node_modules/
+
+# Ignorar o arquivo de ambiente (geralmente contém credenciais ou variáveis sensíveis)
+.env
+
+# Ignorar o arquivo de chave do Firebase, que pode conter informações sensíveis
+src/lib/firebase/serviceAccountKey.json
+
+# Ignorar todos os arquivos de log (útil para logs de erros ou de aplicação)
+*.log
+
+# Ignorar configurações específicas do VSCode (se você não quiser versionar essas configurações)
+.vscode/
